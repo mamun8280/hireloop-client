@@ -10,10 +10,11 @@ import {
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
-import Navbar from "@/components/Navbar";
+import { cn } from "@/lib/utils"
+import Navbar from "@/components/Navbar"
+import { Toaster } from "@/components/ui/sonner"
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'})
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -64,12 +65,15 @@ export default function RootLayout({
         spaceMono.variable,
         instrumentSans.variable,
         jakartaSans.variable,
-        interTight.variable,
+        interTight.variable
       )}
     >
       <body>
         <Navbar />
+
         <ThemeProvider>{children}</ThemeProvider>
+
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   )

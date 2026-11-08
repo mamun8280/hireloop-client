@@ -62,7 +62,7 @@ export default function Navbar() {
 
           {/* Sign In */}
           <Link
-            href="/login"
+            href="/sign-in"
             className="text-[13px] font-medium text-[#7665FF] transition-colors hover:text-[#A094FF]"
           >
             Sign In
@@ -126,7 +126,7 @@ export default function Navbar() {
 
             <div className="flex flex-col gap-3">
               <Link
-                href="/login"
+                href="/sign-in"
                 onClick={() => setOpen(false)}
                 className="rounded-lg px-4 py-3 text-center text-sm font-medium text-[#887AFF] hover:bg-white/5"
               >
@@ -134,7 +134,7 @@ export default function Navbar() {
               </Link>
 
               <Link
-                href="/register"
+                href="/sign-up"
                 onClick={() => setOpen(false)}
                 className="flex h-11 items-center justify-center rounded-lg bg-gradient-to-r from-[#7161F5] to-[#6253F5] text-sm font-medium text-white transition-all hover:brightness-110"
               >
