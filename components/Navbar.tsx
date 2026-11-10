@@ -65,7 +65,7 @@ export default function Navbar({ initialSession }: NavbarProps) {
   };
 
   return (
-    <header className="w-full bg-[#242426] px-4 py-4 sm:px-6">
+    <header className="sticky top-0 z-50 w-full bg-[#242426] px-4 py-4 sm:px-6">
       <nav className="mx-auto flex h-13.75 max-w-7xl items-center justify-between rounded-[14px] bg-[#1D1D1F] px-4 sm:px-5">
 
         {/* Desktop Logo */}
