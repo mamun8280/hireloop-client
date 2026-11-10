@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -35,7 +34,6 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 // Job Types
 const JOB_TYPES = [
@@ -51,6 +49,8 @@ const JOB_CATEGORIES = [
   { label: "Design", value: "design" },
   { label: "Marketing", value: "marketing" },
   { label: "Product", value: "product" },
+  { label: "Infrastructure", value: "infrastructure" },
+  {label: "Quality", value: "quality" },
 ] as const
 
 // Salary Frequencies
@@ -62,57 +62,59 @@ const SALARY_FREQUENCIES = [
 ] as const
 
 // Validation Schema
-const jobFormSchema = z.object({
-  title: z.string().min(3, "Job title is required"),
-  companyName: z.string().min(2, "Company name is required"),
-  category: z.string().min(1, "Select a job category"),
-  jobType: z.string().min(1, "Select a job type"),
-  isRemote: z.boolean(),
-  location: z.string().optional(),
-  deadline: z.string().optional(),
-  minSalary: z.string().min(1, "Enter a minimum value"),
-  maxSalary: z.string().min(1, "Enter a maximum value"),
-  frequency: z.string().min(1, "Select a frequency"),
-  responsibilities: z.string().min(10, "Describe the responsibilities"),
-  requirements: z.string().min(10, "Describe the requirements"),
-}).superRefine((data, ctx) => {
-  if (!data.isRemote && (!data.location || data.location.trim().length < 2)) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["location"],
-      message: "Job location is required",
-    })
-  }
-
-  if (data.minSalary && data.maxSalary) {
-    const min = Number(data.minSalary)
-    const max = Number(data.maxSalary)
-
-    if (Number.isNaN(min) || min < 0) {
+const jobFormSchema = z
+  .object({
+    title: z.string().min(3, "Job title is required"),
+    companyName: z.string().min(2, "Company name is required"),
+    category: z.string().min(1, "Select a job category"),
+    jobType: z.string().min(1, "Select a job type"),
+    isRemote: z.boolean(),
+    location: z.string().optional(),
+    deadline: z.string().optional(),
+    minSalary: z.string().min(1, "Enter a minimum value"),
+    maxSalary: z.string().min(1, "Enter a maximum value"),
+    frequency: z.string().min(1, "Select a frequency"),
+    responsibilities: z.string().min(10, "Describe the responsibilities"),
+    requirements: z.string().min(10, "Describe the requirements"),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.isRemote && (!data.location || data.location.trim().length < 2)) {
       ctx.addIssue({
         code: "custom",
-        path: ["minSalary"],
-        message: "Enter a valid amount",
+        path: ["location"],
+        message: "Job location is required",
       })
     }
 
-    if (Number.isNaN(max) || max < 0) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["maxSalary"],
-        message: "Enter a valid amount",
-      })
-    }
+    if (data.minSalary && data.maxSalary) {
+      const min = Number(data.minSalary)
+      const max = Number(data.maxSalary)
 
-    if (!Number.isNaN(min) && !Number.isNaN(max) && max < min) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["maxSalary"],
-        message: "Max must be higher than min",
-      })
+      if (Number.isNaN(min) || min < 0) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["minSalary"],
+          message: "Enter a valid amount",
+        })
+      }
+
+      if (Number.isNaN(max) || max < 0) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["maxSalary"],
+          message: "Enter a valid amount",
+        })
+      }
+
+      if (!Number.isNaN(min) && !Number.isNaN(max) && max < min) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["maxSalary"],
+          message: "Max must be higher than min",
+        })
+      }
     }
-  }
-})
+  })
 
 type JobFormValues = z.infer<typeof jobFormSchema>
 
@@ -138,16 +140,10 @@ const inputClass =
 
 const labelClass = "text-xs font-medium text-zinc-300"
 
-function FieldError({
-  error,
-}: {
-  error?: { message?: React.ReactNode }
-}) {
+function FieldError({ error }: { error?: { message?: React.ReactNode } }) {
   if (!error?.message) return null
 
-  return (
-    <p className="text-xs text-red-400">{error.message}</p>
-  )
+  return <p className="text-xs text-red-400">{error.message}</p>
 }
 
 // Section Header
@@ -161,7 +157,7 @@ function SectionHeader({
   description: string
 }) {
   return (
-    <CardHeader className="space-y-1 px-4 pb-3 pt-4 sm:px-5">
+    <CardHeader className="space-y-1 px-4 pt-4 pb-3 sm:px-5">
       <CardTitle className="flex items-center gap-2 text-sm font-semibold text-white">
         <span className="flex size-5 items-center justify-center rounded-full bg-[#7161F5]/15 text-[10px] text-[#9287FF]">
           {number}
@@ -215,14 +211,10 @@ export function PostNewJobPage() {
 
   return (
     <main className="min-h-screen w-full bg-[#121214] px-3 py-5 text-white sm:px-5 sm:py-7 md:px-8">
-
       <div className="mx-auto w-full max-w-5xl space-y-5">
-
         {/* Page Header */}
         <header className="flex flex-col gap-4 border-b border-white/5 pb-5 sm:flex-row sm:items-center sm:justify-between">
-
           <div className="space-y-1.5">
-
             <nav className="flex items-center gap-1 text-[11px] text-zinc-500">
               <Link
                 href="/dashboard/recruiter/jobs"
@@ -233,9 +225,7 @@ export function PostNewJobPage() {
 
               <ChevronRight className="size-3" />
 
-              <span className="text-zinc-300">
-                Create New Listing
-              </span>
+              <span className="text-zinc-300">Create New Listing</span>
             </nav>
 
             <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
@@ -243,9 +233,9 @@ export function PostNewJobPage() {
             </h1>
 
             <p className="max-w-xl text-xs leading-relaxed text-zinc-500 sm:text-sm">
-              Fill in the position specifications to attract qualified talent across our network.
+              Fill in the position specifications to attract qualified talent
+              across our network.
             </p>
-
           </div>
 
           <Button
@@ -258,7 +248,6 @@ export function PostNewJobPage() {
 
             {isSubmitting ? "Publishing..." : "Publish Job"}
           </Button>
-
         </header>
 
         {/* Job Form */}
@@ -267,10 +256,8 @@ export function PostNewJobPage() {
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4"
         >
-
           {/* 1. Basic Information */}
           <Card className="overflow-hidden rounded-xl border-white/5 bg-[#19191C] shadow-none">
-
             <SectionHeader
               number="1"
               title="Basic Information"
@@ -278,7 +265,6 @@ export function PostNewJobPage() {
             />
 
             <CardContent className="space-y-4 px-4 pb-5 sm:px-5">
-
               {/* Job Title */}
               <div className="space-y-2">
                 <Label className={labelClass}>Job Title *</Label>
@@ -295,12 +281,11 @@ export function PostNewJobPage() {
 
               {/* Company & Category */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-
                 <div className="space-y-2">
                   <Label className={labelClass}>Company Name *</Label>
 
                   <div className="relative">
-                    <Building2 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
+                    <Building2 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-zinc-500" />
 
                     <Input
                       {...register("companyName")}
@@ -334,10 +319,7 @@ export function PostNewJobPage() {
 
                     <SelectContent className="border-white/10 bg-[#222225] text-white">
                       {JOB_CATEGORIES.map((category) => (
-                        <SelectItem
-                          key={category.value}
-                          value={category.value}
-                        >
+                        <SelectItem key={category.value} value={category.value}>
                           {category.label}
                         </SelectItem>
                       ))}
@@ -346,48 +328,49 @@ export function PostNewJobPage() {
 
                   <FieldError error={errors.category} />
                 </div>
-
               </div>
 
               {/* Job Type */}
               <div className="space-y-2">
                 <Label className={labelClass}>Job Type *</Label>
 
-                <ToggleGroup
-                  variant="outline"
+                <div
                   className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4"
-                  value={selectedJobType ? [selectedJobType] : []}
-                  onValueChange={(groupValue) => {
-                    if (groupValue.length > 0) {
-                      setValue(
-                        "jobType",
-                        groupValue[groupValue.length - 1],
-                        { shouldValidate: true }
-                      )
-                    }
-                  }}
+                  role="group"
+                  aria-label="Job Type"
                 >
-                  {JOB_TYPES.map((type) => (
-                    <ToggleGroupItem
-                      key={type.value}
-                      value={type.value}
-                      aria-invalid={!!errors.jobType}
-                      className="h-10 w-full rounded-lg border-white/5 bg-[#222225] text-xs text-zinc-400 hover:bg-white/5 hover:text-white data-[state=on]:border-[#7161F5] data-[state=on]:bg-[#7161F5]/15 data-[state=on]:text-white"
-                    >
-                      {type.label}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
+                  {JOB_TYPES.map((type) => {
+                    const isSelected = selectedJobType === type.value
+
+                    return (
+                      <button
+                        key={type.value}
+                        type="button"
+                        aria-pressed={isSelected}
+                        onClick={() =>
+                          setValue("jobType", type.value, {
+                            shouldValidate: true,
+                          })
+                        }
+                        className={`h-10 w-full rounded-lg text-xs font-medium transition-colors focus-visible:ring-2 focus-visible:ring-[#7161F5]/50 focus-visible:outline-none ${
+                          isSelected
+                            ? "border border-[#7161F5] bg-[#7161F5]/15 text-white"
+                            : "border border-white/5 bg-[#222225] text-zinc-400 hover:bg-white/5 hover:text-white"
+                        }`}
+                      >
+                        {type.label}
+                      </button>
+                    )
+                  })}
+                </div>
 
                 <FieldError error={errors.jobType} />
               </div>
-
             </CardContent>
           </Card>
 
           {/* 2. Location, Compensation & Timeline */}
           <Card className="overflow-hidden rounded-xl border-white/5 bg-[#19191C] shadow-none">
-
             <SectionHeader
               number="2"
               title="Location, Compensation & Timeline"
@@ -395,12 +378,9 @@ export function PostNewJobPage() {
             />
 
             <CardContent className="space-y-4 px-4 pb-5 sm:px-5">
-
               {/* Remote Toggle */}
               <div className="flex items-center justify-between gap-4 rounded-lg border border-white/5 bg-[#222225] p-3">
-
                 <div className="flex items-center gap-3">
-
                   <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#7161F5]/10">
                     <BriefcaseBusiness className="size-4 text-[#9287FF]" />
                   </div>
@@ -414,7 +394,6 @@ export function PostNewJobPage() {
                       Enable worldwide or distributed candidate applications
                     </p>
                   </div>
-
                 </div>
 
                 <Switch
@@ -425,19 +404,17 @@ export function PostNewJobPage() {
                     })
                   }
                 />
-
               </div>
 
               {/* Location & Deadline */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-
                 <div className="space-y-2">
                   <Label className={labelClass}>
                     Job Location {!isRemote && "*"}
                   </Label>
 
                   <div className="relative">
-                    <MapPin className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
+                    <MapPin className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-zinc-500" />
 
                     <Input
                       {...register("location")}
@@ -450,9 +427,7 @@ export function PostNewJobPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className={labelClass}>
-                    Application Deadline
-                  </Label>
+                  <Label className={labelClass}>Application Deadline</Label>
 
                   <Input
                     {...register("deadline")}
@@ -462,17 +437,15 @@ export function PostNewJobPage() {
 
                   <FieldError error={errors.deadline} />
                 </div>
-
               </div>
 
               {/* Salary */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-
                 <div className="space-y-2">
                   <Label className={labelClass}>Min Salary / Rate *</Label>
 
                   <div className="relative">
-                    <DollarSign className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
+                    <DollarSign className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-zinc-500" />
 
                     <Input
                       {...register("minSalary")}
@@ -492,7 +465,7 @@ export function PostNewJobPage() {
                   <Label className={labelClass}>Max Salary / Rate *</Label>
 
                   <div className="relative">
-                    <DollarSign className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-500" />
+                    <DollarSign className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-zinc-500" />
 
                     <Input
                       {...register("maxSalary")}
@@ -541,15 +514,12 @@ export function PostNewJobPage() {
 
                   <FieldError error={errors.frequency} />
                 </div>
-
               </div>
-
             </CardContent>
           </Card>
 
           {/* 3. Responsibilities & Requirements */}
           <Card className="overflow-hidden rounded-xl border-white/5 bg-[#19191C] shadow-none">
-
             <SectionHeader
               number="3"
               title="Responsibilities & Requirements"
@@ -557,12 +527,9 @@ export function PostNewJobPage() {
             />
 
             <CardContent className="space-y-4 px-4 pb-5 sm:px-5">
-
               {/* Responsibilities */}
               <div className="space-y-2">
-                <Label className={labelClass}>
-                  Key Responsibilities *
-                </Label>
+                <Label className={labelClass}>Key Responsibilities *</Label>
 
                 <Textarea
                   {...register("responsibilities")}
@@ -584,20 +551,20 @@ export function PostNewJobPage() {
                 <Textarea
                   {...register("requirements")}
                   rows={4}
-                  placeholder={"• 3+ years of experience with React, TypeScript...\n• Solid understanding of DOM performance...\n• Experience working with product teams..."}
+                  placeholder={
+                    "• 3+ years of experience with React, TypeScript...\n• Solid understanding of DOM performance...\n• Experience working with product teams..."
+                  }
                   className="min-h-28 resize-y rounded-lg border-white/5 bg-[#222225] text-sm text-white placeholder:text-zinc-500 focus-visible:ring-[#7161F5]"
                   aria-invalid={!!errors.requirements}
                 />
 
                 <FieldError error={errors.requirements} />
               </div>
-
             </CardContent>
           </Card>
 
           {/* Bottom Actions */}
           <div className="flex justify-end gap-3 pb-6">
-
             <Button
               type="button"
               variant="outline"
@@ -616,11 +583,8 @@ export function PostNewJobPage() {
 
               {isSubmitting ? "Publishing..." : "Publish Job"}
             </Button>
-
           </div>
-
         </form>
-
       </div>
     </main>
   )
