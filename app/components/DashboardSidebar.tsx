@@ -7,6 +7,7 @@ import {
   Building2,
   FileText,
   LayoutDashboard,
+  PlusCircle,
   Settings,
   Users,
   Wallet,
@@ -24,6 +25,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useSession } from "@/lib/auth-client"
+import Link from "next/link"
 
 type UserRole = "seeker" | "recruiter" | "admin"
 
@@ -47,6 +49,7 @@ const menuItemsByRole: Record<UserRole, MenuItem[]> = {
     { name: "Dashboard", url: "/dashboard/recruiter", icon: LayoutDashboard },
     { name: "My Company", url: "/dashboard/recruiter/company", icon: Building2 },
     { name: "Manage Jobs", url: "/dashboard/recruiter/jobs", icon: Briefcase },
+    { name: "Add Job", url: "/dashboard/recruiter/jobs/new", icon: PlusCircle },
     { name: "Applications", url: "/dashboard/recruiter/applications", icon: FileText },
     { name: "Settings", url: "/dashboard/recruiter/settings", icon: Settings },
     // NOTE: the Figma sidebar (Role=Recruiter) has no Billing item, but the
@@ -81,7 +84,7 @@ export function DashboardSidebar() {
                 <SidebarMenuItem key={item.name}>
                   <SidebarMenuButton
                     isActive={pathname === item.url}
-                    render={<a href={item.url} />}
+                    render={<Link href={item.url} />}
                   >
                     <item.icon />
                     <span>{item.name}</span>

@@ -18,11 +18,7 @@ import {
 
 import logo from "@/app/images/logo.png";
 
-const navLinks = [
-  { name: "Browse Jobs", href: "/jobs" },
-  { name: "Company", href: "/company" },
-  { name: "Pricing", href: "/pricing" },
-];
+
 
 type NavbarProps = {
   initialSession: typeof authClient.$Infer.Session | null;
@@ -35,6 +31,15 @@ export default function Navbar({ initialSession }: NavbarProps) {
   const { data: session, isPending } = authClient.useSession();
 
   const router = useRouter();
+
+  const navLinks = [
+  { name: "Browse Jobs", href: "/jobs" },
+  { name: "Company", href: "/company" },
+  { name: "Pricing", href: "/pricing" },
+  {name: "dashboard", href: `/dashboard/${session?.user?.role || 'seeker'}` }
+]as const;
+
+
 
   // Use server session during initial loading
   const currentSession = isPending ? initialSession : session;
