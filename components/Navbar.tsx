@@ -1,68 +1,62 @@
 
-"use client";
+"use client"
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { Menu, X, LogOut } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import Image from "next/image"
+import Link from "next/link"
+import { useState } from "react"
+import { Menu, X, LogOut } from "lucide-react"
+import { authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 
-import logo from "@/app/images/logo.png";
-
-
+import logo from "@/app/images/logo.png"
 
 type NavbarProps = {
-  initialSession: typeof authClient.$Infer.Session | null;
-};
+  initialSession: typeof authClient.$Infer.Session | null
+}
 
 export default function Navbar({ initialSession }: NavbarProps) {
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession()
 
-  const router = useRouter();
+  const router = useRouter()
 
   const navLinks = [
-  { name: "Browse Jobs", href: "/jobs" },
-  { name: "Company", href: "/company" },
-  { name: "Pricing", href: "/pricing" },
-  {name: "dashboard", href: `/dashboard/${session?.user?.role || 'seeker'}` }
-]as const;
-
-
+    { name: "Browse Jobs", href: "/jobs" },
+    { name: "Company", href: "/company" },
+    { name: "Pricing", href: "/pricing" },
+    {
+      name: "dashboard", href: `/dashboard/${session?.user?.role || "seeker"}`,
+    },
+  ] as const
 
   // Use server session during initial loading
-  const currentSession = isPending ? initialSession : session;
+  const currentSession = isPending ? initialSession : session
 
-  const userName = currentSession?.user?.name || "User";
+  const userName = currentSession?.user?.name || "User"
 
-  const handleSignOut = async () => {
-    try {
-      setLoading(true);
+ const handleSignOut = async () => {
+  try {
+    setLoading(true)
 
-      await authClient.signOut();
+    await authClient.signOut()
 
-      toast.success("Signed out successfully!");
+    toast.success("Signed out successfully!")
 
-      setOpen(false);
-      router.push("/");
-      router.refresh();
-    } catch (error) {
-      toast.error("Failed to sign out!");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setOpen(false)
+    router.push("/")
+    router.refresh()
+  } catch {
+    toast.error("Failed to sign out!")
+  } finally {
+    setLoading(false)
+  }
+}
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#242426] px-4 py-4 sm:px-6">
@@ -76,7 +70,8 @@ export default function Navbar({ initialSession }: NavbarProps) {
             width={115}
             height={40}
             priority
-            className="h-auto w-26.25 object-contain sm:w-28.75"
+            style={{ width: "115px", height: "auto" }}
+            className="object-contain"
           />
         </Link>
 
@@ -90,11 +85,7 @@ export default function Navbar({ initialSession }: NavbarProps) {
             onClick={() => setOpen(!open)}
             className="z-10 text-white hover:bg-white/10 hover:text-white"
           >
-            {open ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
 
           <Link
@@ -108,7 +99,8 @@ export default function Navbar({ initialSession }: NavbarProps) {
               width={115}
               height={40}
               priority
-              className="h-auto w-26.25 object-contain"
+              style={{ width: "105px", height: "auto" }}
+              className="object-contain"
             />
           </Link>
         </div>
@@ -181,7 +173,8 @@ export default function Navbar({ initialSession }: NavbarProps) {
                 alt="Hireloop"
                 width={115}
                 height={40}
-                className="h-auto w-27.5 object-contain"
+                style={{ width: "110px", height: "auto" }}
+                className="object-contain"
               />
             </SheetTitle>
 
@@ -248,5 +241,5 @@ export default function Navbar({ initialSession }: NavbarProps) {
         </Sheet>
       </nav>
     </header>
-  );
+  )
 }

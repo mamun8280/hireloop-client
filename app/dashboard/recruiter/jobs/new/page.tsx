@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
+import { createJob } from "@/lib/actions/jobs"
 
 // Job Types
 const JOB_TYPES = [
@@ -193,21 +194,28 @@ export function PostNewJobPage() {
   const selectedJobType = watch("jobType")
   const selectedFrequency = watch("frequency")
 
-  const onSubmit = async (values: JobFormValues) => {
-    const data = {
-      ...values,
-      minSalary: Number(values.minSalary),
-      maxSalary: Number(values.maxSalary),
-    }
 
-    // TODO: Connect your real API here
-    await new Promise((resolve) => setTimeout(resolve, 600))
 
-    console.log("Job form data:", data)
+const onSubmit = async (values: JobFormValues) => {
+  const data = {
+    ...values,
+    minSalary: Number(values.minSalary),
+    maxSalary: Number(values.maxSalary),
+  };
 
-    toast.success("Job posted successfully!")
-    reset(DEFAULT_VALUES)
+  const createdJob = await createJob(data);
+
+  console.log("Created Job:", createdJob);
+
+  if (createdJob.success) {
+    toast.success("Job posted successfully!");
+    reset(DEFAULT_VALUES);
+  } else {
+    toast.error("Failed to post job!");
   }
+};
+
+
 
   return (
     <main className="min-h-screen w-full bg-[#121214] px-3 py-5 text-white sm:px-5 sm:py-7 md:px-8">
